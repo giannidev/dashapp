@@ -16,7 +16,7 @@ class NewMeasure(unittest.TestCase):
         #Gianni wants to enter a new measure
         
         #He goes to his brand new webapp 
-        self.browser.get('http://localhost:8000/dashapp')
+        self.browser.get('http://localhost:8000/')
 
         #He sees the message inviting to enter a new measure
         header_text = self.browser.find_element_by_tag_name('h1').text
@@ -33,17 +33,19 @@ class NewMeasure(unittest.TestCase):
         
         inputMeasure = self.browser.find_element_by_id('id_new_measure')
         self.assertEqual(
-            inputMetric.get_attribute('placeholder'),
+            inputMeasure.get_attribute('placeholder'),
             'Enter the measure'
         )
         
         #He enters M1 to choose the metric
         inputMetric.send_keys('M1')
+        #Hit the TAB key
+        inputMetric.send_keys(Keys.TAB)
         #And then he enters 10 as measure
         inputMeasure.send_keys('10')
         
         #When he hits enter the value is stored and showed in the recently entered list
-        inputbox.send_keys(Keys.ENTER)  
+        inputMeasure.send_keys(Keys.ENTER)  
         time.sleep(1)
         
         recentTable = self.browser.find_element_by_id('id_recent_table')  
