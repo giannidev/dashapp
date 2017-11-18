@@ -4,9 +4,15 @@
 <body>
     <h1>Enter a new measure</h1>
     
-    Metric: <input id="id_new_metric" placeholder ='Enter the metric'/>
-    <br/>
-    Measure: <input id="id_new_measure" placeholder='Enter the measure'/>
+    <form method="POST" >
+    Metric: <input name="new_metric" id="id_new_metric" placeholder ="Enter the metric"/>
+    {% csrf_token %}
+    </form>
+    
+    <h1>Recent measures</h1>
+    <table id="id_recent_table">
+    		<tr><td>{{ new_item_text }}</td></tr>
+    </table>
     
 </body>
 
