@@ -7,7 +7,7 @@ from django.http import HttpResponse
 
 def home_page(request):
     return render(request, 'home.html', {
-        'new_item_text': request.POST.get('new_metric',''),
+        'new_metric': request.POST.get('new_metric',''),
     })
 
 
