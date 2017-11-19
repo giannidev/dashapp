@@ -20,7 +20,9 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
         
-    def test_can_save_a_POST_request(self):
-        response = self.client.post('/', data={'new_metric': 'A new metric'})
-        self.assertIn('A new metric', response.content.decode())
+    def test_can_save_a_metric_in_POST_request(self):
+        response = self.client.post('/', data={'new_metric': 'A new metric',
+                                               'new_measure': 'A new measure'})
+        self.assertIn('A new metric: A new measure', response.content.decode())
         self.assertTemplateUsed(response, 'home.html')
+        

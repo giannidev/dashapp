@@ -30,17 +30,26 @@ class NewMeasure(unittest.TestCase):
             inputMetric.get_attribute('placeholder'),
             'Enter the metric'
         )
+        inputMeasure = self.browser.find_element_by_id('id_new_measure')
+        self.assertEqual(
+            inputMeasure.get_attribute('placeholder'),
+            'Enter the measure'
+        )
         
         #He enters M1 to choose the metric
         inputMetric.send_keys('M1')
+        #Then he hits TAB to go to the measure input
+        inputMetric.send_keys(Keys.TAB)
+        #And enters 10 as measure
+        inputMeasure.send_keys('10')
         
-        #When he hits enter the value is stored and showed in the recently entered list
+        #When he hits enter the values are stored and showed in the recently entered list
         inputMetric.send_keys(Keys.ENTER)  
         time.sleep(5)
         
         recentTable = self.browser.find_element_by_id('id_recent_table')  
         rows = recentTable.find_elements_by_tag_name('tr')
-        self.assertIn('M1', [row.text for row in rows])
+        self.assertIn('M1: 10', [row.text for row in rows])
         #self.assertTrue(
          #   any(row.text == 'M1: 10' for row in rows),
          # f"New measure did not appear in table. Contents were:\n{recentTable.text}"            )
