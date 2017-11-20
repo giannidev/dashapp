@@ -24,11 +24,19 @@ class HomePageTest(TestCase):
     def test_can_save_a_metric_in_POST_request(self):
         response = self.client.post('/', data={'new_metric': 'A new metric',
                                                'new_measure': 'A new measure'})
+        self.assertEqual(Metric.objects.count(), 1)
+        new_metric = Metric.objects.first()
+        self.assertEqual(new_metric.name,'A new metric')
+        
         self.assertIn('A new metric: A new measure', response.content.decode())
         self.assertTemplateUsed(response, 'home.html')
         
+    def test_only_saves_metrics_when_necessary(self):
+        self.client.get('/')
+        self.assertEqual(Metric.objects.count(), 0)
+        
 
-class ItemModelTest(TestCase):
+class MetricModelTest(TestCase):
 
     def test_saving_and_retrieving_metrics(self):
         first_metric = Metric()
@@ -37,11 +45,11 @@ class ItemModelTest(TestCase):
         first_metric.frequence = "MONTH"
         first_metric.save()
 
-        second_metric = Metric()
-        second_metric.name = 'M2'
-        second_metric.description = 'Description for M2'
-        second_metric.frequence = "RELEASE"
-        second_metric.save()
+        second_metric = Metric.objects.create(name='M2',description='Description for M2',frequence='RELEASE')
+       # second_metric.name = 'M2'
+       # second_metric.description = 'Description for M2'
+       # second_metric.frequence = "RELEASE"
+       # second_metric.save()
 
         saved_items = Metric.objects.all()
         self.assertEqual(saved_items.count(), 2)

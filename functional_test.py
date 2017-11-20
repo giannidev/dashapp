@@ -25,11 +25,11 @@ class NewMeasure(unittest.TestCase):
         )
         
         #He enters M1 to choose the metric
-        inputMetric.send_keys('M1')
+        inputMetric.send_keys(metric)
         #Then he hits TAB to go to the measure input
         inputMetric.send_keys(Keys.TAB)
         #And enters 10 as measure
-        inputMeasure.send_keys('10')
+        inputMeasure.send_keys(measure)
         
         #When he hits enter the values are stored and showed in the recently entered list
         inputMetric.send_keys(Keys.ENTER)  
