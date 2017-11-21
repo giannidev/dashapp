@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from dashapp.models import Metric
 
 from django.http import HttpResponse
@@ -12,14 +12,10 @@ def home_page(request):
         new_measure = request.POST.get('new_measure')
         #Metric.objects.create(name=new_metric_name,description='Description for M2',frequence='RELEASE')
         Metric.objects.create(name=new_metric_name)
-    else:
-        new_metric_name =''
-        new_measure =''
+        return redirect('/')
     
-    return render(request, 'home.html', {
-        'new_metric': request.POST.get('new_metric',''),
-        'new_measure': request.POST.get('new_measure',''),
-    })
+    metrics = Metric.objects.all()
+    return render(request, 'home.html', {'metrics': metrics})
 
 
 

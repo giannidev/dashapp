@@ -28,12 +28,24 @@ class HomePageTest(TestCase):
         new_metric = Metric.objects.first()
         self.assertEqual(new_metric.name,'A new metric')
         
-        self.assertIn('A new metric: A new measure', response.content.decode())
-        self.assertTemplateUsed(response, 'home.html')
+    def test_redirect_after_POST(self):
+        response = self.client.post('/', data={'new_metric': 'A new metric',
+                                               'new_measure': 'A new measure'})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
         
     def test_only_saves_metrics_when_necessary(self):
         self.client.get('/')
         self.assertEqual(Metric.objects.count(), 0)
+        
+    def test_displays_all_metrics(self):
+        Metric.objects.create(name='M1')
+        Metric.objects.create(name='M2')
+
+        response = self.client.get('/')
+
+        self.assertIn('M1', response.content.decode())
+        self.assertIn('M2', response.content.decode())
         
 
 class MetricModelTest(TestCase):

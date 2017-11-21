@@ -16,7 +16,9 @@
     
     <h1>Recent measures</h1>
     <table id="id_recent_table">
-    		<tr><td>{{ new_metric }}: {{ new_measure }}</td></tr>
+    		{% for metric in metrics %}
+    			<tr><td>{{ metric.name }}: {{ measure.value }}</td></tr>
+    		{% endfor %}
     </table>
     
 </body>
