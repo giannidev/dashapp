@@ -1,1 +1,1 @@
-Be aware I am not a good programmer!
+More info are in the Wiki
