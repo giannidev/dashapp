@@ -17,7 +17,9 @@
     <h1>Recent measures</h1>
     <table id="id_recent_table">
     		{% for metric in metrics %}
-    			<tr><td>{{ metric.name }}: {{ measure.value }}</td></tr>
+    			{% if metric.frequence == "RELEASE" %}
+    				<tr><td>{{ metric.name }} {{ metric.description }} {{ metric.frequence }}</td></tr>
+    			{% endif %}
     		{% endfor %}
     </table>
     

@@ -38,7 +38,7 @@ class HomePageTest(TestCase):
         self.client.get('/')
         self.assertEqual(Metric.objects.count(), 0)
         
-    def test_displays_all_metrics(self):
+    '''   def test_displays_all_metrics(self):
         Metric.objects.create(name='M1')
         Metric.objects.create(name='M2')
 
@@ -46,6 +46,27 @@ class HomePageTest(TestCase):
 
         self.assertIn('M1', response.content.decode())
         self.assertIn('M2', response.content.decode())
+    '''
+        
+    def test_displays_all_full_metrics(self):
+        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
+        Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
+
+        response = self.client.get('/')
+
+        self.assertIn('M1 first metric RELEASE', response.content.decode())
+        self.assertIn('M2 second metric RELEASE', response.content.decode())
+        
+    def test_displays_only_RELEASE_metrics(self):
+        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
+        Metric.objects.create(name='M2', description="second metric", frequence="MONTH")
+        Metric.objects.create(name='M3', description="third metric", frequence="RELEASE")
+        Metric.objects.create(name='M4', description="third metric", frequence="MONTH")
+        response = self.client.get('/')
+
+        self.assertIn('M1 first metric RELEASE', response.content.decode())
+        self.assertIn('M3 third metric RELEASE', response.content.decode())
+        self.assertNotIn('M2 second metric MONTH', response.content.decode())
         
 
 class MetricModelTest(TestCase):
