@@ -2,7 +2,7 @@
     <title>Release data entry</title>
 
 <body>
-    <h1>Old aread</h1>
+    <h2>Old area</h2>
     
     <form method="POST" >
     Metric: <input name="new_metric" id="id_new_metric" placeholder ="Enter the metric"/>
@@ -14,7 +14,7 @@
     {% csrf_token %}
     </form>
     
-    <h1>NEW Release metrics</h1>
+    <h1>NEW Release Measures</h1>
     <form method="POST" >
     <table id="id_recent_table">
     		{% for metric in metrics %}
@@ -23,6 +23,9 @@
     			{% endif %}
     		{% endfor %}
     </table>
+    <input type="submit" value="submit" name="submit"/>
+    	{% csrf_token %}
+    	</form>
     
 </body>
 

@@ -2,9 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import unittest
+from selenium.webdriver.remote.webelement import WebElement
 
-
-class NewMeasure(unittest.TestCase):
+class NewMeasures(unittest.TestCase):
     
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -13,29 +13,18 @@ class NewMeasure(unittest.TestCase):
         self.browser.quit()
         
     def inputMeasure(self, metric, measure):
-        inputMetric = self.browser.find_element_by_id('id_new_metric')
-        self.assertEqual(
-            inputMetric.get_attribute('placeholder'),
-            'Enter the metric'
-        )
-        inputMeasure = self.browser.find_element_by_id('id_new_measure')
+        inputMeasure = self.browser.find_element_by_id('id_new_measure_' + metric)
         self.assertEqual(
             inputMeasure.get_attribute('placeholder'),
             'Enter the measure'
         )
-        
-        #He enters M1 to choose the metric
-        inputMetric.send_keys(metric)
-        #Then he hits TAB to go to the measure input
-        inputMetric.send_keys(Keys.TAB)
-        #And enters 10 as measure
         inputMeasure.send_keys(measure)
-        
-        #When he hits enter the values are stored and showed in the recently entered list
-        inputMetric.send_keys(Keys.ENTER)  
 
-    def test_can_enter_a_measure(self):
-        #Gianni wants to enter a new measure
+    def test_can_enter_release_measures(self):
+        #Given two metrics stored in the DB
+        #When I enter release metrics
+        #Then this metrics are correctly saved in the database
+       
         
         #He goes to his brand new webapp 
         self.browser.get('http://localhost:8000/')
@@ -44,23 +33,23 @@ class NewMeasure(unittest.TestCase):
         header_text = self.browser.find_element_by_tag_name('h1').text
         #body = self.browser.find_element_by_tag_name("body")
         #self.assert('dashapp' in body.text, "Did not find dashall in Body")
-        self.assertIn(header_text,'Enter a new measure')
+        self.assertIn(header_text,'NEW Release Measures')
         
         #He enters two measures
         self.inputMeasure('M1', '10')
-        time.sleep(2)
         self.inputMeasure('M2', '20')
-        time.sleep(2)
+        self.browser.find_element_by_name('submit').click()
         
-        recentTable = self.browser.find_element_by_id('id_recent_table')  
-        rows = recentTable.find_elements_by_tag_name('tr')
-        self.assertIn('M1: 10', [row.text for row in rows])
-        self.assertIn('M2: 20', [row.text for row in rows] )
-        #self.assertTrue(
-         #   any(row.text == 'M1: 10' for row in rows),
-         # f"New measure did not appear in table. Contents were:\n{recentTable.text}"            )
+        '''#The measures are stored in the db
+        self.assertEqual(Measure.objects.count(), 2)
+        firstMeasure = Measure.objects.first()
+        self.assertEqual(firstMeasure.metric,Metric.objects.first())
+        self.assertEqual(firstMeasure.rawValue,10)
+        secondMeasure = Measure.objects.last()
+        self.assertEqual(secondMeasure.metric,Metric.objects.last())
+        self.assertEqual(secondMeasure.rawValue,20)
+        '''
         
-        self.fail('Finish the test!')
         
 if __name__ == '__main__':
     unittest.main()
