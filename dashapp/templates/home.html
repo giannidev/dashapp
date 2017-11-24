@@ -1,8 +1,8 @@
 <html>
-    <title>Dashapp</title>
+    <title>Release data entry</title>
 
 <body>
-    <h1>Enter a new measure</h1>
+    <h1>Old aread</h1>
     
     <form method="POST" >
     Metric: <input name="new_metric" id="id_new_metric" placeholder ="Enter the metric"/>
@@ -14,11 +14,12 @@
     {% csrf_token %}
     </form>
     
-    <h1>Recent measures</h1>
+    <h1>NEW Release metrics</h1>
+    <form method="POST" >
     <table id="id_recent_table">
     		{% for metric in metrics %}
     			{% if metric.frequence == "RELEASE" %}
-    				<tr><td>{{ metric.name }} {{ metric.description }} {{ metric.frequence }}</td></tr>
+    				<tr><td>{{ metric.name }} {{ metric.description }} {{ metric.frequence }} <input name="new_measure_{{ metric.name }}" id="id_new_measure_{{ metric.name }}" placeholder ="Enter the measure"/></td></tr>
     			{% endif %}
     		{% endfor %}
     </table>

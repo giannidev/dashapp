@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import resolve
 from dashapp.views import home_page
 from django.http import HttpRequest
-from dashapp.models import Metric
+from dashapp.models import Metric, Measure
 
 class HomePageTest(TestCase):
     
@@ -21,16 +21,19 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
         
-    def test_can_save_a_metric_in_POST_request(self):
+    '''obsolete def test_can_save_a_metric_in_POST_request(self):
         response = self.client.post('/', data={'new_metric': 'A new metric',
                                                'new_measure': 'A new measure'})
         self.assertEqual(Metric.objects.count(), 1)
         new_metric = Metric.objects.first()
         self.assertEqual(new_metric.name,'A new metric')
+        '''
         
     def test_redirect_after_POST(self):
-        response = self.client.post('/', data={'new_metric': 'A new metric',
-                                               'new_measure': 'A new measure'})
+        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
+        Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
+        response = self.client.post('/', data={'new_measure_M1': '10',
+                                               'new_measure_M2': '20'})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], '/')
         
@@ -57,7 +60,7 @@ class HomePageTest(TestCase):
         self.assertIn('M1 first metric RELEASE', response.content.decode())
         self.assertIn('M2 second metric RELEASE', response.content.decode())
         
-    def test_displays_only_RELEASE_metrics(self):
+    def test_displays_only_RELEASE_metrics_and_full(self):
         Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
         Metric.objects.create(name='M2', description="second metric", frequence="MONTH")
         Metric.objects.create(name='M3', description="third metric", frequence="RELEASE")
@@ -68,6 +71,29 @@ class HomePageTest(TestCase):
         self.assertIn('M3 third metric RELEASE', response.content.decode())
         self.assertNotIn('M2 second metric MONTH', response.content.decode())
         
+    def test_homepage_returns_all_the_release_metrics_with_input(self):
+        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
+        Metric.objects.create(name='M3', description="third metric", frequence="RELEASE")
+        response = self.client.get('/')
+
+        self.assertIn('M1 first metric RELEASE', response.content.decode())
+        self.assertIn('id_new_measure_M1', response.content.decode())
+        self.assertIn('M3 third metric RELEASE', response.content.decode())
+        self.assertIn('id_new_measure_M3', response.content.decode())
+        
+    def test_store_new_release_measures(self):
+        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
+        Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
+        response = self.client.post('/', data={'new_measure_M1': '10',
+                                               'new_measure_M2': '20'})
+        self.assertEqual(Measure.objects.count(), 2)
+        firstMeasure = Measure.objects.first()
+        self.assertEqual(firstMeasure.metric,Metric.objects.first())
+        self.assertEqual(firstMeasure.rawValue,10)
+        secondMeasure = Measure.objects.last()
+        self.assertEqual(secondMeasure.metric,Metric.objects.last())
+        self.assertEqual(secondMeasure.rawValue,20)
+
 
 class MetricModelTest(TestCase):
 
