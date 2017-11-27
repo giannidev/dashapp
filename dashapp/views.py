@@ -21,6 +21,7 @@ def home_page(request):
         
 
         '''Should use a for loop here'''
+        
         Measure.objects.create(metric=Metric.objects.first(), rawValue=new_measure_M1, event=Event.objects.first())
         Measure.objects.create(metric=Metric.objects.last(), rawValue=new_measure_M2, event=Event.objects.first())
         ''' TODO
