@@ -26,6 +26,6 @@ class Measure(models.Model):
     event = models.ForeignKey(Event)
     rawValue = models.DecimalField(max_digits=6, decimal_places=2)
     
-    def _get_value(self):
-        return(self.rawValue/self.metric.modifier)
-    value = property(_get_value)
+    @property
+    def value(self):
+        return(self.rawValue / self.metric.modifier)

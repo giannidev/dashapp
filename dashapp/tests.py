@@ -90,23 +90,32 @@ class HomePageTest(TestCase):
         self.assertIn('id_new_measure_M3', response.content.decode())
         
     def test_store_new_release_measures(self):
-        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
-        Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
+        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE", modifier=1)
+        Metric.objects.create(name='M2', description="second metric", frequence="MONTH", modifier=1)
+        Metric.objects.create(name='M3', description="third metric", frequence="RELEASE", modifier=2)
         
-        response = self.client.post('/', data={'new_measure_M1': '10',
+        response = self.client.post('/', data={'new_event_name':'dummy event',
+                                               'new_measure_M1': '10',
                                                'new_measure_M2': '20'})
         
         self.assertEqual(Measure.objects.count(), 2)
         firstMeasure = Measure.objects.first()
         self.assertEqual(firstMeasure.metric,Metric.objects.first())
-        self.assertEqual(firstMeasure.rawValue,10)
+        self.assertEqual(firstMeasure.value,10)
         secondMeasure = Measure.objects.last()
         self.assertEqual(secondMeasure.metric,Metric.objects.last())
-        self.assertEqual(secondMeasure.rawValue,20)
+        self.assertEqual(secondMeasure.value,10)
 
 
 class MetricModelTest(TestCase):
 
+    def test_can_calculate_value_with_modifier(self):
+        mymetric = Metric.objects.create(name='M1', description="first metric", frequence="RELEASE", modifier=2)
+        myevent = Event.objects.create(name='dummy event', date=date.today())
+        mymeasure = Measure.objects.create(metric=mymetric, event=myevent, rawValue=20)
+        self.assertEqual(mymeasure.value,10)
+        
+    
     def test_saving_and_retrieving_metrics(self):
         first_metric = Metric()
         first_metric.name = 'M1'
@@ -127,4 +136,6 @@ class MetricModelTest(TestCase):
         second_saved_item = saved_items[1]
         self.assertEqual(first_saved_item.name, 'M1')
         self.assertEqual(second_saved_item.description, 'Description for M2')
+        
+        
         
