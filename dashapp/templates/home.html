@@ -2,30 +2,20 @@
     <title>Release data entry</title>
 
 <body>
-    <h2>Old area</h2>
-    
-    <form method="POST" >
-    Metric: <input name="new_metric" id="id_new_metric" placeholder ="Enter the metric"/>
-    <br/>
-    Measure: <input name="new_measure" id="id_new_measure" placeholder ="Enter the measure"/>
-    <br/>
-    <input type="submit" value="submit" />
-    
-    {% csrf_token %}
-    </form>
-    
+        
     <h1>NEW Release Measures</h1>
+    
     <form method="POST" >
-    <table id="id_recent_table">
+    	<table id="id_recent_table">
     		{% for metric in metrics %}
     			{% if metric.frequence == "RELEASE" %}
     				<tr><td>{{ metric.name }} {{ metric.description }} {{ metric.frequence }} <input name="new_measure_{{ metric.name }}" id="id_new_measure_{{ metric.name }}" placeholder ="Enter the measure"/></td></tr>
     			{% endif %}
     		{% endfor %}
-    </table>
+    	</table>
     <input type="submit" value="submit" name="submit"/>
-    	{% csrf_token %}
-    	</form>
+    {% csrf_token %}
+    </form>
     
 </body>
 
