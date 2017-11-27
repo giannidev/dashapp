@@ -14,13 +14,18 @@ class Metric(models.Model):
     ('RELEASE', 'RELEASE'),
     )
     frequence = models.CharField(max_length=20,choices=FREQUENCIES)
+    modifier = models.DecimalField(max_digits=6, decimal_places=2, default=1)
     
+class Event(models.Model):
+    name = models.CharField(max_length=80)
+    date = models.DateField()
+
+
 class Measure(models.Model):
     metric = models.ForeignKey(Metric)
+    event = models.ForeignKey(Event)
     rawValue = models.DecimalField(max_digits=6, decimal_places=2)
-    modifier = models.DecimalField(max_digits=6, decimal_places=2)
+    
     def _get_value(self):
-        return(rawValue/modifier)
+        return(self.rawValue/self.metric.modifier)
     value = property(_get_value)
-    date = models.DateField()
-    event = models.CharField(max_length=80)

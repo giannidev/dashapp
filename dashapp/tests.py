@@ -4,7 +4,8 @@ from django.test import TestCase
 from django.urls import resolve
 from dashapp.views import home_page
 from django.http import HttpRequest
-from dashapp.models import Metric, Measure
+from dashapp.models import Metric, Measure, Event
+from datetime import date
 
 class HomePageTest(TestCase):
     
@@ -29,10 +30,17 @@ class HomePageTest(TestCase):
         self.assertEqual(new_metric.name,'A new metric')
         '''
         
+    def test_can_create_an_event(self):
+         newEvent = Event.objects.create(name='dummy event', date=date.today())
+         self.assertEqual(Event.objects.count(),1,'Expecting 1 but got '+str(Event.objects.count()))
+         
+        
     def test_redirect_after_POST(self):
         Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
         Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
-        response = self.client.post('/', data={'new_measure_M1': '10',
+        
+        response = self.client.post('/', data={'new_event_name': 'dummy',
+                                               'new_measure_M1': '10',
                                                'new_measure_M2': '20'})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], '/')
@@ -84,8 +92,10 @@ class HomePageTest(TestCase):
     def test_store_new_release_measures(self):
         Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
         Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
+        
         response = self.client.post('/', data={'new_measure_M1': '10',
                                                'new_measure_M2': '20'})
+        
         self.assertEqual(Measure.objects.count(), 2)
         firstMeasure = Measure.objects.first()
         self.assertEqual(firstMeasure.metric,Metric.objects.first())
