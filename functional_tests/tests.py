@@ -1,10 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
-import unittest
+#import unittest
+from django.test import LiveServerTestCase
 from selenium.webdriver.remote.webelement import WebElement
+# import os
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+# from dashapp.models import Measure
 
-class NewMeasures(unittest.TestCase):
+
+class NewMeasures(LiveServerTestCase):
     
     def setUp(self):
         self.browser = webdriver.Firefox()
@@ -27,7 +32,8 @@ class NewMeasures(unittest.TestCase):
        
         
         #He goes to his brand new webapp 
-        self.browser.get('http://localhost:8000/')
+        #self.browser.get('http://localhost:8000/')
+        self.browser.get(self.live_server_url)
 
         #He sees the message inviting to enter a new measure
         header_text = self.browser.find_element_by_tag_name('h1').text
@@ -35,12 +41,23 @@ class NewMeasures(unittest.TestCase):
         #self.assert('dashapp' in body.text, "Did not find dashall in Body")
         self.assertIn(header_text,'NEW Release Measures')
         
-        #He enters two measures
+        #He enters two measures for an event
+        inputEvent = self.browser.find_element_by_id('id_new_event_name')
+        self.assertEqual(
+            inputEvent.get_attribute('placeholder'),
+            'Enter the name'
+        )
+        inputEvent.send_keys('testing event')
         self.inputMeasure('M1', '10')
         self.inputMeasure('M2', '20')
         self.browser.find_element_by_name('submit').click()
         
-        '''#The measures are stored in the db
+        #The measures are stored in the db: need to fix the django settings to use this
+        ''' storedMeasures = Measure.objects.filter(event='testing event')
+        self.assertEqual(storedMeasures.count(),2)
+        '''
+        
+        '''
         self.assertEqual(Measure.objects.count(), 2)
         firstMeasure = Measure.objects.first()
         self.assertEqual(firstMeasure.metric,Metric.objects.first())
@@ -51,5 +68,5 @@ class NewMeasures(unittest.TestCase):
         '''
         
         
-if __name__ == '__main__':
-    unittest.main()
+'''if __name__ == '__main__':
+    unittest.main()'''
