@@ -7,13 +7,12 @@ from django.db import models
 class Metric(models.Model):
     name = models.CharField(max_length=80)
     description = models.CharField(max_length=200)
- #   FREQUENCIES = ('Release','Month','Quarter')
     FREQUENCIES = (
     ('MONTH', 'MONTH'),
     ('QUARTER', 'QUARTER'),
     ('RELEASE', 'RELEASE'),
     )
-    frequence = models.CharField(max_length=20,choices=FREQUENCIES)
+    frequency = models.CharField(max_length=20,choices=FREQUENCIES)
     modifier = models.DecimalField(max_digits=6, decimal_places=2, default=1)
     
 class Event(models.Model):

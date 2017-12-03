@@ -11,8 +11,8 @@
     	Event name: <input name="new_event_name" id="id_new_event_name" placeholder ="Enter the name"/>
     	
     		{% for metric in metrics %}
-    			{% if metric.frequence == "RELEASE" %}
-    				<tr><td>{{ metric.name }} {{ metric.description }} {{ metric.frequence }} <input name="new_measure_{{ metric.name }}" id="id_new_measure_{{ metric.name }}" placeholder ="Enter the measure"/></td></tr>
+    			{% if metric.frequency == "RELEASE" %}
+    				<tr><td>{{ metric.name }} {{ metric.description }} <input name="new_measure_{{ metric.name }}" id="id_new_measure_{{ metric.name }}" placeholder ="Enter the measure"/></td></tr>
     			{% endif %}
     		{% endfor %}
     		

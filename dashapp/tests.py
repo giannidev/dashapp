@@ -36,8 +36,8 @@ class HomePageTest(TestCase):
          
         
     def test_redirect_after_POST(self):
-        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
-        Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
+        Metric.objects.create(name='M1', description="first metric", frequency="R")
+        Metric.objects.create(name='M2', description="second metric", frequency="R")
         
         response = self.client.post('/', data={'new_event_name': 'dummy',
                                                'new_measure_M1': '10',
@@ -60,39 +60,39 @@ class HomePageTest(TestCase):
     '''
         
     def test_displays_all_full_metrics(self):
-        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
-        Metric.objects.create(name='M2', description="second metric", frequence="RELEASE")
+        Metric.objects.create(name='M1', description="first metric", frequency="RELEASE")
+        Metric.objects.create(name='M2', description="second metric", frequency="RELEASE")
 
         response = self.client.get('/')
 
-        self.assertIn('M1 first metric RELEASE', response.content.decode())
-        self.assertIn('M2 second metric RELEASE', response.content.decode())
+        self.assertIn('M1 first metric', response.content.decode())
+        self.assertIn('M2 second metric', response.content.decode())
         
-    def test_displays_only_RELEASE_metrics_and_full(self):
-        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
-        Metric.objects.create(name='M2', description="second metric", frequence="MONTH")
-        Metric.objects.create(name='M3', description="third metric", frequence="RELEASE")
-        Metric.objects.create(name='M4', description="third metric", frequence="MONTH")
+    def test_displays_only_R_metrics_and_full(self):
+        Metric.objects.create(name='M1', description="first metric", frequency="RELEASE")
+        Metric.objects.create(name='M2', description="second metric", frequency="MONTH")
+        Metric.objects.create(name='M3', description="third metric", frequency="RELEASE")
+        Metric.objects.create(name='M4', description="third metric", frequency="MONTH")
         response = self.client.get('/')
 
-        self.assertIn('M1 first metric RELEASE', response.content.decode())
-        self.assertIn('M3 third metric RELEASE', response.content.decode())
-        self.assertNotIn('M2 second metric MONTH', response.content.decode())
+        self.assertIn('M1 first metric', response.content.decode())
+        self.assertIn('M3 third metric', response.content.decode())
+        self.assertNotIn('M2 second metric', response.content.decode())
         
-    def test_homepage_returns_all_the_release_metrics_with_input(self):
-        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE")
-        Metric.objects.create(name='M3', description="third metric", frequence="RELEASE")
+    def test_homepage_returns_all_the_R_metrics_with_input(self):
+        Metric.objects.create(name='M1', description="first metric", frequency="RELEASE")
+        Metric.objects.create(name='M3', description="third metric", frequency="RELEASE")
         response = self.client.get('/')
 
-        self.assertIn('M1 first metric RELEASE', response.content.decode())
+        self.assertIn('M1 first metric', response.content.decode())
         self.assertIn('id_new_measure_M1', response.content.decode())
-        self.assertIn('M3 third metric RELEASE', response.content.decode())
+        self.assertIn('M3 third metric', response.content.decode())
         self.assertIn('id_new_measure_M3', response.content.decode())
         
-    def test_store_new_release_measures(self):
-        Metric.objects.create(name='M1', description="first metric", frequence="RELEASE", modifier=1)
-        Metric.objects.create(name='M2', description="second metric", frequence="MONTH", modifier=1)
-        Metric.objects.create(name='M3', description="third metric", frequence="RELEASE", modifier=2)
+    def test_store_new_R_measures(self):
+        Metric.objects.create(name='M1', description="first metric", frequency="RELEASE", modifier=1)
+        Metric.objects.create(name='M2', description="second metric", frequency="MONTH", modifier=1)
+        Metric.objects.create(name='M3', description="third metric", frequency="RELEASE", modifier=2)
         
         response = self.client.post('/', data={'new_event_name':'dummy event',
                                                'new_measure_M1': '10',
@@ -110,7 +110,7 @@ class HomePageTest(TestCase):
 class MetricModelTest(TestCase):
 
     def test_can_calculate_value_with_modifier(self):
-        mymetric = Metric.objects.create(name='M1', description="first metric", frequence="RELEASE", modifier=2)
+        mymetric = Metric.objects.create(name='M1', description="first metric", frequency="R", modifier=2)
         myevent = Event.objects.create(name='dummy event', date=date.today())
         mymeasure = Measure.objects.create(metric=mymetric, event=myevent, rawValue=20)
         self.assertEqual(mymeasure.value,10)
@@ -120,13 +120,13 @@ class MetricModelTest(TestCase):
         first_metric = Metric()
         first_metric.name = 'M1'
         first_metric.description = 'Description for M1'
-        first_metric.frequence = "MONTH"
+        first_metric.frequency = "M"
         first_metric.save()
 
-        second_metric = Metric.objects.create(name='M2',description='Description for M2',frequence='RELEASE')
+        second_metric = Metric.objects.create(name='M2',description='Description for M2',frequency='R')
        # second_metric.name = 'M2'
        # second_metric.description = 'Description for M2'
-       # second_metric.frequence = "RELEASE"
+       # second_metric.frequency = "R"
        # second_metric.save()
 
         saved_items = Metric.objects.all()

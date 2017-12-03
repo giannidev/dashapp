@@ -4,6 +4,8 @@ import time
 #import unittest
 from django.test import LiveServerTestCase
 from selenium.webdriver.remote.webelement import WebElement
+import sqlite3
+import csv
 # import os
 # os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
 # from dashapp.models import Measure
@@ -24,9 +26,23 @@ class NewMeasures(LiveServerTestCase):
             'Enter the measure'
         )
         inputMeasure.send_keys(measure)
-
+        
+    def storeInitialMetrics(self):
+        print('Reading file')
+        conn = sqlite3.connect('db.sqlite3')
+        c = conn.cursor()
+        creader = csv.reader(open('defaultMetrics.csv'), delimiter=',')
+        for t in creader:
+            print(t)
+            print('Storing metric')
+            c.execute('INSERT INTO  dashapp_metric VALUES (?,?,?,?,?)', t )
+           
+        conn.commit()
+        conn.close()
+        
     def test_can_enter_release_measures(self):
         #Given two metrics stored in the DB
+        self.storeInitialMetrics()
         #When I enter release metrics
         #Then this metrics are correctly saved in the database
        
